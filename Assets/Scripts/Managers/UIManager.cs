@@ -2,32 +2,56 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIManager {
-    Stack<UI_Base> PopupStack = new Stack<UI_Base>();
-    Stack<UI_Base> SceneStack = new Stack<UI_Base>();
-    public void ShowPopup<T>(string name) where T : UI_Base {
-        GameObject go = Manager.Resource.Instantiate($"Prefabs/Popup/{name}");
-        T P = Utils.GetOrAddComponent<T>(go);
-        PopupStack.Push(P);
+
+public class UIManager : MonoBehaviour {
+    Stack<GameObject> PopupStack = new Stack<GameObject>();
+    private int _canvasOrder = 10;
+    private GameObject _rootUIPopUp = null;
+    private GameObject popUpGo = null;
+    private GameObject go = null;
+
+
+    // method
+    public void SetCanvas(GameObject go) {
+        Canvas canvasComponent = go.GetComponent<Canvas>();
+        if (!canvasComponent) {
+            canvasComponent = go.AddComponent<Canvas>();
+        }
+
+        canvasComponent.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvasComponent.overrideSorting = false;
+        canvasComponent.sortingOrder = _canvasOrder;
+
+        _canvasOrder += 1;
     }
-    public void ShowScene<T>(string name) where T : UI_Base {
-        GameObject go = Manager.Resource.Instantiate($"Prefabs/Scene/{name}");
-        T P = Utils.GetOrAddComponent<T>(go);
-        SceneStack.Push(P);
+    public GameObject ShowUIPopUp(string name) {
+
+        go = Manager.Resource.Instantiate($"Prefabs/UI/{name}");
+        go.transform.SetParent(_rootUIPopUp.transform);
+
+        PopupStack.Push(go);
+
+        return go;
     }
-    public void ShowWorldSpaceUI<T>(GameObject root, string name) where T : UI_Base {
-        GameObject go = Manager.Resource.Instantiate($"Prefabs/WorldMotherFucker/{name}");
-        go.transform.SetParent(root.transform);
-        go.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
-        go.GetComponent<Canvas>().worldCamera = Camera.main;
-        T P = Utils.GetOrAddComponent<T>(go);
+    public void ClosePopUp() {
+        if (PopupStack.Count == 0) {
+            return;
+        }
+        
+        popUpGo = PopupStack.Pop();
+        Manager.Resource.Destory(popUpGo, 0);
     }
-    public void ClosePopup() {
-        UI_Base P = PopupStack.Pop();
-        Manager.Resource.Destory(P.gameObject, 0.0f);
+
+    // life cycle
+    public void Init() {
+        Debug.Log("시작");
+        _rootUIPopUp = GameObject.Find("RootUIPopUp");
+        if (!_rootUIPopUp) {
+            _rootUIPopUp = new GameObject("RootUIPopUp");
+        }
+        DontDestroyOnLoad(_rootUIPopUp);
     }
     public void Clear() {
         PopupStack.Clear();
-        SceneStack.Clear();
     }
 }

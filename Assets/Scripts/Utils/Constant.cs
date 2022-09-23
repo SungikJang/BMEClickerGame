@@ -40,7 +40,9 @@ public class Constant : MonoBehaviour {
     public enum Scene {
         StartScene,
         JumpingScene,
-        FortressScene,
-        CurlingScene,
+        JumpPassScene,
+        SkiingScene,
+        SlidingScene,
+        PunchScene
     }
 }

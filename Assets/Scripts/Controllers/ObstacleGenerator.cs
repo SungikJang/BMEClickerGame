@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ObstacleGenerator : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject Obstacles;
+
     private GameObject Obstacle;
     private float timer = 0;
     // Start is called before the first frame update
@@ -15,19 +18,34 @@ public class ObstacleGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()  
     {
-        this.timer += Time.deltaTime;
-        if (this.timer > 2f)
+        timer += Time.deltaTime;
+        if (timer > 2f)
         {
-            this.MakeObstacle();
-            this.timer = 0;
+            MakeObstacle();
+            timer = 0;
         }
     }
 
     private void MakeObstacle()
     {
-        this.Obstacle = Manager.Resource.Instantiate("Prefabs/Obstacle");
-        this.Obstacle.transform.position = new Vector3(15.5f, Random.Range(-6.5f, 0), 0);
+        Obstacle = Manager.Resource.Instantiate("Prefabs/Obstacle");
+        Obstacle.transform.SetParent(Obstacles.transform, false);
+        Obstacle.transform.position = new Vector3(15.5f, Random.Range(-6.5f, 0), 0);
     }
-    
-    
+
+    public void ClearObstacle()
+    {
+        var obstacleTransforms = Obstacles.GetComponentsInChildren<Transform>();
+
+        if (obstacleTransforms != null)
+        {
+            foreach (var obstacle in obstacleTransforms)
+            {
+                if (obstacle != Obstacles.transform)
+                {
+                    Manager.Resource.Destory(obstacle.gameObject);
+                }
+            }
+        }
+    }
 }

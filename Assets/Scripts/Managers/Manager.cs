@@ -38,6 +38,7 @@ public class Manager : MonoBehaviour
             }
             DontDestroyOnLoad(Go);
             s_instance = Go.GetComponent<Manager>();
+            s_instance.UIManager.Init();
             //s_instance.DataManager.Init();
             //s_instance.PoolManager.Init();
             //s_instance.NetworkManager.Init();
@@ -58,5 +59,6 @@ public class Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        _input_manager.OnUpdate();
     }
 }

@@ -9,6 +9,7 @@ public class SceneManagers
     public void LoadScene(Constant.Scene Scene) {
         Manager.Clear();
         SceneManager.LoadScene(System.Enum.GetName(typeof(Constant.Scene), Scene));
+        NowScene = Scene;
     }
 
     // Start is called before the first frame update
